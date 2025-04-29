@@ -37,10 +37,22 @@ final_dict = {}
 for chars in result_array:
     chars_str = ''.join(chars)
     if chars_str in new_dict:
-        # Remove last 15 values if there are more than 15
+        key_length = len(chars_str)
         values = new_dict[chars_str]
-        trimmed_values = values[:-6] if len(values) > 6 else []
-        final_dict[chars_str] = trimmed_values
+
+        # Apply trimming rules based on key length
+        if key_length == 3:  # Skip keys with 3 characters
+            continue
+        elif 4 <= key_length <= 5:  # Trim 3 values for 4-5 character keys
+            trimmed_values = values[:-10] if len(values) > 10 else []
+        elif 6 <= key_length <= 8:  # No trimming for 6-7 character keys
+            trimmed_values = values
+        else:  # Default case (trim nothing)
+            trimmed_values = values
+
+        # Only add if we have values left after trimming
+        if trimmed_values:
+            final_dict[chars_str] = trimmed_values
 
 # Replacement mapping for number encoding
 replacement_map = {
@@ -49,8 +61,8 @@ replacement_map = {
     '31': 'r', '32': 's', '33': 't', '34': 'u', '35': 'v', '36': 'w', '37': 'x', '38': 'y', '39': 'z',
     '41': 'A', '42': 'B', '43': 'C', '44': 'D', '45': 'E', '46': 'F', '47': 'G', '48': 'H', '49': 'I',
     '51': 'J', '52': 'K', '53': 'L', '54': 'M', '55': 'N', '56': 'O', '57': 'P', '58': 'Q', '59': 'R',
-    '61': 'S', '62': 'T', '63': 'U', '64': 'V', '65': 'W', '66': 'X', '67': 'Y', '68': 'Z', '69': '0',
-    '71': '1', '72': '2', '73': '3', '74': '4', '75': '5', '76': '6', '77': '7', '78': '8', '79': '9',
+    '61': 'S', '62': 'T', '63': 'U', '64': 'V', '65': 'W', '66': 'X', '67': 'Y', '68': 'Z', '69': 'а',
+    '71': 'б', '72': 'в', '73': 'г', '74': 'д', '75': 'е', '76': 'ж', '77': 'з', '78': 'и', '79': 'й',
     '81': '!', '82': '@', '83': '#', '84': '$', '85': '%', '86': '^', '87': '&', '88': '*', '89': '(',
     '91': ')', '92': '-', '93': '_', '94': '=', '95': '+', '96': '[', '97': ']', '98': '{', '99': '}'
 }
@@ -72,7 +84,7 @@ for key in final_dict:
     final_dict[key] = [replace_numbers_with_letters(val) for val in final_dict[key]]
 
 # Step 6: Write output to file
-with open('output_gonna_cry_smol.txt', 'w') as file:
+with open('output_gonna_cry_smol_sad.txt', 'w') as file:
     for key, values in final_dict.items():
         # Key is already in clean format (no brackets/commas)
         # Values have been trimmed and encoded
@@ -81,6 +93,6 @@ with open('output_gonna_cry_smol.txt', 'w') as file:
 
 
 total_sum = 0
-
+# 13c95aa
 total_values = sum(len(values) for values in final_dict.values())
 print(f"Общее количество значений: {total_values}")
