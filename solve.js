@@ -70,18 +70,6 @@ for (const originalKey in decodedData) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 function convertToRanks(matrix) {
     // Собираем все элементы в один массив с сохранением их позиций
     const elements = [];
@@ -416,7 +404,7 @@ function getDiagonals(matrix) {
   return diagonals;
 }
 
-function logic(arr_in) {
+function logic(arr_in, show_comands) {
   let arr = arr_in
   //const reference_arr = illegal_sorting(arr);  
   const reference_3_3_matrix_numeric = fillArray(3,3)
@@ -453,44 +441,68 @@ function logic(arr_in) {
    
           for (let com = 0; com < local_arr_solve.length; com++){
             command = local_arr_solve[com]
-            switch (command){
-                case '1':
-                  solved_local_arr = rot(solved_local_arr, [0, 0])
-                  break
-                case '2':
-                  solved_local_arr = swapH(solved_local_arr, [0, 0])
-                  break
-                case '3':
-                  solved_local_arr = swapV(solved_local_arr, [0, 0])
-                  break
-                case '4':
-                  solved_local_arr = rot(solved_local_arr, [1, 0])
-                  break
-                case '5':
-                  solved_local_arr = swapH(solved_local_arr, [1, 0])
-                  break
-                case '6':
-                  solved_local_arr = swapV(solved_local_arr, [1, 0])
-                  break
-                case '7':
-                  solved_local_arr = rot(solved_local_arr, [0, 1])
-                  break
-                case '8':
-                  solved_local_arr = swapH(solved_local_arr, [0, 1])
-                  break
-                case '9':
-                  solved_local_arr = swapV(solved_local_arr, [0, 1])
-                  break
-                case 'a':
-                  solved_local_arr = rot(solved_local_arr, [1, 1])
-                  break
-                case 'b':
-                  solved_local_arr = swapH(solved_local_arr, [1, 1])
-                  break
-                case 'c':
-                  solved_local_arr = swapV(solved_local_arr, [1, 1])
-                  break
-            }
+            switch (command) {
+    case '1':
+        //1
+        solved_local_arr = rot(solved_local_arr, [0, 0])
+        command_list.push("rot" + String(col + 0) + String(line + 0))
+        break
+    case '2':
+        //2
+        solved_local_arr = swapH(solved_local_arr, [0, 0])
+        command_list.push("swapH" + String(col + 0) + String(line + 0))
+        break
+    case '3':
+        //3
+        solved_local_arr = swapV(solved_local_arr, [0, 0])
+        command_list.push("swapV" + String(col + 0) + String(line + 0))
+        break
+    case '4':
+        //4
+        solved_local_arr = rot(solved_local_arr, [1, 0])
+        command_list.push("rot" + String(col + 1) + String(line + 0))
+        break
+    case '5':
+        //5
+        solved_local_arr = swapH(solved_local_arr, [1, 0])
+        command_list.push("swapH" + String(col + 1) + String(line + 0))
+        break
+    case '6':
+        //6
+        solved_local_arr = swapV(solved_local_arr, [1, 0])
+        command_list.push("swapV" + String(col + 1) + String(line + 0))
+        break
+    case '7':
+        //7
+        solved_local_arr = rot(solved_local_arr, [0, 1])
+        command_list.push("rot" + String(col + 0) + String(line + 1))
+        break
+    case '8':
+        //8
+        solved_local_arr = swapH(solved_local_arr, [0, 1])
+        command_list.push("swapH" + String(col + 0) + String(line + 1))
+        break
+    case '9':
+        //9
+        solved_local_arr = swapV(solved_local_arr, [0, 1])
+        command_list.push("swapV" + String(col + 0) + String(line + 1))
+        break
+    case 'a':
+        // a
+        solved_local_arr = rot(solved_local_arr, [1, 1])
+        command_list.push("rot" + String(col + 1) + String(line + 1))
+        break
+    case 'b':
+        // b
+        solved_local_arr = swapH(solved_local_arr, [1, 1])
+        command_list.push("swapH" + String(col + 1) + String(line + 1))
+        break
+    case 'c':
+        // c
+        solved_local_arr = swapV(solved_local_arr, [1, 1])
+        command_list.push("swapV" + String(col + 1) + String(line + 1))
+        break
+          }
             
             
           } //тут решился локальный массив
@@ -518,6 +530,8 @@ function logic(arr_in) {
       }
     }
     console.log("fin")
+    if (show_comands==1) console.log(command_list)
+    console.log(command_list.length)
     console.table(arr)
 }              
 
@@ -532,10 +546,14 @@ test = [
   [3, 1, 2, 3, 1, 3, 1, 3, 1, 3],
   [1, 1, 3, 1, 3, 1, 3, 1, 1, 1],
   [3, 1, 1, 3, 3, 1, 3, 3, 1, 3],
+  [3, 1, 1, 3, 3, 1, 3, 3, 1, 3],
+  [3, 1, 1, 3, 3, 1, 3, 3, 1, 3],
+  [3, 1, 1, 3, 3, 1, 3, 3, 1, 3],
+  [3, 1, 1, 3, 3, 1, 3, 3, 1, 3],
+  [3, 1, 1, 3, 3, 1, 3, 3, 1, 3],
+  [3, 1, 1, 3, 3, 1, 3, 3, 1, 3],
   [1, 1, 1, 3, 3, 1, 1, 1, 3, 1]
 ];
 
 
-
-
-logic(test)
+logic(test, 1)
