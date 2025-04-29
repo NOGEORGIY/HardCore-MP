@@ -1,3 +1,87 @@
+
+const fs = require('fs');
+let data = fs.readFileSync(0, 'utf-8')
+
+function parseGiantString(str) {
+    const inputData = {};
+    const lines = str.split('\n').filter(line => line.trim() !== '');
+    
+    for (const line of lines) {
+        const [key, valuesStr] = line.split(':').map(part => part.trim());
+        if (!key || !valuesStr) continue;
+        
+        const values = valuesStr.split(' ').filter(val => val !== '');
+        inputData[key] = values;
+    }
+    
+    return inputData;
+}
+
+const inputData = parseGiantString(data);
+
+const reverseReplacementMap = {
+    'a': '12', 'b': '13', 'c': '14', 'd': '15', 'e': '16', 'f': '17', 'g': '18', 'h': '19',
+    'i': '21', 'j': '22', 'k': '23', 'l': '24', 'm': '25', 'n': '26', 'o': '27', 'p': '28', 'q': '29',
+    'r': '31', 's': '32', 't': '33', 'u': '34', 'v': '35', 'w': '36', 'x': '37', 'y': '38', 'z': '39',
+    'A': '41', 'B': '42', 'C': '43', 'D': '44', 'E': '45', 'F': '46', 'G': '47', 'H': '48', 'I': '49',
+    'J': '51', 'K': '52', 'L': '53', 'M': '54', 'N': '55', 'O': '56', 'P': '57', 'Q': '58', 'R': '59',
+    'S': '61', 'T': '62', 'U': '63', 'V': '64', 'W': '65', 'X': '66', 'Y': '67', 'Z': '68', 'а': '69',
+    'б': '71', 'в': '72', 'г': '73', 'д': '74', 'е': '75', 'ж': '76', 'з': '77', 'и': '78', 'й': '79',
+    '!': '81', '@': '82', '#': '83', '$': '84', '%': '85', '^': '86', '&': '87', '*': '88', '(': '89',
+    ')': '91', '-': '92', '_': '93', '=': '94', '+': '95', '[': '96', ']': '97', '{': '98', '}': '99'
+};
+
+
+const decodedData = {}
+
+
+function decodeString(str) {
+    let result = '';
+    for (const char of str) {
+        if (reverseReplacementMap[char]) {
+            result += reverseReplacementMap[char];
+        } else {
+            // Если символ не найден в карте, оставляем как есть
+            result += char;
+        }
+    }
+    return result;
+}
+
+
+for (const key in inputData) {
+    decodedData[key] = inputData[key].map(item => decodeString(item));
+}
+
+
+
+const invertedDataWithCharArrays = {};
+
+for (const originalKey in decodedData) {
+    for (const decodedValue of decodedData[originalKey]) {
+        // Разбиваем строку на массив символов
+        const charArray = Array.from(originalKey);
+        
+
+
+        invertedDataWithCharArrays[decodedValue] = charArray;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function convertToRanks(matrix) {
     // Собираем все элементы в один массив с сохранением их позиций
     const elements = [];
@@ -29,6 +113,79 @@ function convertToRanks(matrix) {
     return rankMatrix;
 }
 
+function bfsSolve(matrix, needArr, maxDepth = 10) {
+    // Функция проверки решения согласно условию itOk
+    const isSolved = (current) => {
+    const currentRanks = convertToRanks(current);
+    const needArrRanks = convertToRanks(needArr);
+    
+    return (
+        (currentRanks[2][0] === needArrRanks[2][0]) &&
+        ([needArrRanks[1][0], needArrRanks[2][1]].includes(currentRanks[1][0])) &&
+        ([needArrRanks[1][0], needArrRanks[2][1]].includes(currentRanks[2][1])) &&
+        ([needArrRanks[0][0], needArrRanks[1][1], needArrRanks[2][2]].includes(currentRanks[0][0])) &&
+        ([needArrRanks[0][0], needArrRanks[1][1], needArrRanks[2][2]].includes(currentRanks[1][1])) &&
+        ([needArrRanks[0][0], needArrRanks[1][1], needArrRanks[2][2]].includes(currentRanks[2][2])) &&
+        ([needArrRanks[0][1], needArrRanks[1][2]].includes(currentRanks[0][1])) &&
+        ([needArrRanks[0][1], needArrRanks[1][2]].includes(currentRanks[1][2])) &&
+        (currentRanks[0][2] === needArrRanks[0][2])
+    );
+};
+
+    // Все возможные операции
+    const operations = [
+        { name: '1', fn: (m) => rot(m, [0, 0]) },
+        { name: '2', fn: (m) => swapH(m, [0, 0]) },
+        { name: '3', fn: (m) => swapV(m, [0, 0]) },
+        { name: '4', fn: (m) => rot(m, [1, 0]) },
+        { name: '5', fn: (m) => swapH(m, [1, 0]) },
+        { name: '6', fn: (m) => swapV(m, [1, 0]) },
+        { name: '7', fn: (m) => rot(m, [0, 1]) },
+        { name: '8', fn: (m) => swapH(m, [0, 1]) },
+        { name: '9', fn: (m) => swapV(m, [0, 1]) },
+        { name: 'a', fn: (m) => rot(m, [1, 1]) },
+        { name: 'b', fn: (m) => swapH(m, [1, 1]) },
+        { name: 'c', fn: (m) => swapV(m, [1, 1]) }
+    ];
+
+    // Очередь для BFS: содержит { matrix, path }
+    const queue = [{ matrix: matrix.map(row => [...row]), path: [] }];
+    const visited = new Set();
+    const matrixToKey = (m) => m.flat().join(',');
+
+    // Добавляем начальную матрицу в посещенные
+    visited.add(matrixToKey(matrix));
+
+    while (queue.length > 0) {
+        const current = queue.shift();
+
+        // Проверяем, соответствует ли матрица условию itOk
+        if (isSolved(current.matrix)) {
+            return current.path; // Возвращаем путь к решению
+        }
+
+        // Если достигли максимальной глубины - пропускаем
+        if (current.path.length >= maxDepth) {
+            continue;
+        }
+
+        // Генерируем все возможные следующие состояния
+        for (const op of operations) {
+            const newMatrix = op.fn(current.matrix);
+            const newKey = matrixToKey(newMatrix);
+
+            if (!visited.has(newKey)) {
+                visited.add(newKey);
+                queue.push({
+                    matrix: newMatrix,
+                    path: [...current.path, op.name]
+                });
+            }
+        }
+    }
+
+    return null; // Решение не найдено
+}
 
 // Функция для восстановления исходных значений
 function restoreFromRanks(rankMatrix, originalMatrix) {
@@ -59,30 +216,6 @@ function restoreFromRanks(rankMatrix, originalMatrix) {
     
     // Восстанавливаем значения
     return rankMatrix.map(row => row.map(rank => rankToValue.get(rank)));
-}
-
-//Парсит словарь матрица-команды
-function parseData(content) { 
-  const lines = content.split('\n');
-  const result = {};
-  
-  lines.forEach(line => {
-    // Разделяем строку на ключ и команды
-    const colonIndex = line.indexOf(':');
-    if (colonIndex === -1) return; // Пропускаем строки без двоеточия
-    
-    const key = line.substring(0, colonIndex).trim();
-    const commandsStr = line.substring(colonIndex + 1).trim();
-    
-    if (!key || !commandsStr) return;
-    
-    // Разбиваем команды по пробелам и фильтруем пустые строки
-    const commands = commandsStr.split(/\s+/).filter(cmd => cmd.trim() !== '');
-    
-    result[key] = commands;
-  });
-  
-  return result;
 }
 
 function reorderArrayBasedOnTemplate(template, target) {
@@ -286,12 +419,10 @@ function getDiagonals(matrix) {
 function logic(arr_in) {
   let arr = arr_in
   //const reference_arr = illegal_sorting(arr);  
-  const fs = require('fs');
   const reference_3_3_matrix_numeric = fillArray(3,3)
   let command_list = []
-    let data = fs.readFileSync(0, 'utf-8')
-    const parsedData = parseData(data);
-    const fullData = parsedData;
+    
+    const fullData = invertedDataWithCharArrays;
     let flag_same = 0
     
     while(arr.length >= 3 && arr[0].length >= 3 && flag_same == 0) {
@@ -309,11 +440,9 @@ function logic(arr_in) {
                       let needArr = [[4,7,9],
                                      [3,5,8],
                                      [1,2,6]]
-
-                      local_arr_solve = bfsSolve(local_arr, needArr, 8);
+                      local_arr_solve = bfsSolve(local_arr, needArr, 10);
                         
                         if (!local_arr_solve) {
-                            console.log("Решение не найдено даже через BFS");
                             continue;
                         }
                   }
@@ -324,68 +453,44 @@ function logic(arr_in) {
    
           for (let com = 0; com < local_arr_solve.length; com++){
             command = local_arr_solve[com]
-            switch (command) {
-    case '1':
-        //1
-        solved_local_arr = rot(solved_local_arr, [0, 0])
-        command_list.push("rot" + String(col + 0) + String(line + 0))
-        break
-    case '2':
-        //2
-        solved_local_arr = swapH(solved_local_arr, [0, 0])
-        command_list.push("swapH" + String(col + 0) + String(line + 0))
-        break
-    case '3':
-        //3
-        solved_local_arr = swapV(solved_local_arr, [0, 0])
-        command_list.push("swapV" + String(col + 0) + String(line + 0))
-        break
-    case '4':
-        //4
-        solved_local_arr = rot(solved_local_arr, [1, 0])
-        command_list.push("rot" + String(col + 1) + String(line + 0))
-        break
-    case '5':
-        //5
-        solved_local_arr = swapH(solved_local_arr, [1, 0])
-        command_list.push("swapH" + String(col + 1) + String(line + 0))
-        break
-    case '6':
-        //6
-        solved_local_arr = swapV(solved_local_arr, [1, 0])
-        command_list.push("swapV" + String(col + 1) + String(line + 0))
-        break
-    case '7':
-        //7
-        solved_local_arr = rot(solved_local_arr, [0, 1])
-        command_list.push("rot" + String(col + 0) + String(line + 1))
-        break
-    case '8':
-        //8
-        solved_local_arr = swapH(solved_local_arr, [0, 1])
-        command_list.push("swapH" + String(col + 0) + String(line + 1))
-        break
-    case '9':
-        //9
-        solved_local_arr = swapV(solved_local_arr, [0, 1])
-        command_list.push("swapV" + String(col + 0) + String(line + 1))
-        break
-    case 'a':
-        // a
-        solved_local_arr = rot(solved_local_arr, [1, 1])
-        command_list.push("rot" + String(col + 1) + String(line + 1))
-        break
-    case 'b':
-        // b
-        solved_local_arr = swapH(solved_local_arr, [1, 1])
-        command_list.push("swapH" + String(col + 1) + String(line + 1))
-        break
-    case 'c':
-        // c
-        solved_local_arr = swapV(solved_local_arr, [1, 1])
-        command_list.push("swapV" + String(col + 1) + String(line + 1))
-        break
-          }
+            switch (command){
+                case '1':
+                  solved_local_arr = rot(solved_local_arr, [0, 0])
+                  break
+                case '2':
+                  solved_local_arr = swapH(solved_local_arr, [0, 0])
+                  break
+                case '3':
+                  solved_local_arr = swapV(solved_local_arr, [0, 0])
+                  break
+                case '4':
+                  solved_local_arr = rot(solved_local_arr, [1, 0])
+                  break
+                case '5':
+                  solved_local_arr = swapH(solved_local_arr, [1, 0])
+                  break
+                case '6':
+                  solved_local_arr = swapV(solved_local_arr, [1, 0])
+                  break
+                case '7':
+                  solved_local_arr = rot(solved_local_arr, [0, 1])
+                  break
+                case '8':
+                  solved_local_arr = swapH(solved_local_arr, [0, 1])
+                  break
+                case '9':
+                  solved_local_arr = swapV(solved_local_arr, [0, 1])
+                  break
+                case 'a':
+                  solved_local_arr = rot(solved_local_arr, [1, 1])
+                  break
+                case 'b':
+                  solved_local_arr = swapH(solved_local_arr, [1, 1])
+                  break
+                case 'c':
+                  solved_local_arr = swapV(solved_local_arr, [1, 1])
+                  break
+            }
             
             
           } //тут решился локальный массив
@@ -414,12 +519,11 @@ function logic(arr_in) {
     }
     console.log("fin")
     console.table(arr)
-    console.log("количество команд:" + command_list)
 }              
 
   
-test = 
-[  [1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+test = [
+  [1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
   [1, 2, 2, 1, 2, 1, 2, 2, 1, 2],
   [2, 2, 2, 3, 3, 2, 2, 3, 3, 2],
   [2, 3, 3, 2, 1, 1, 3, 3, 3, 2],
@@ -428,5 +532,10 @@ test =
   [3, 1, 2, 3, 1, 3, 1, 3, 1, 3],
   [1, 1, 3, 1, 3, 1, 3, 1, 1, 1],
   [3, 1, 1, 3, 3, 1, 3, 3, 1, 3],
-  [1, 1, 1, 3, 3, 1, 1, 1, 3, 1]]
+  [1, 1, 1, 3, 3, 1, 1, 1, 3, 1]
+];
+
+
+
+
 logic(test)
