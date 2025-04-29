@@ -1,4 +1,3 @@
-: G-Qb6 G-Zb5 G_Qa6 G_Za5 H-Pb6 H-Yb5 H_Pa6 H_Ya5 P-Hb6 P-Zb4 P_Ha6 P_Za4 Q-Gb6 Q-Yb4 Q_Ga6 Q_Ya4 Y-Hb5 Y-Qb4 Y_Ha5 Y_Qa4 Z-Gb5 Z-Pb4 Z_Ga5 Z_Pa4
 61176c: бBw+8 бCn+8 бKw=8 бLn=8 бTv=8 бUm=8 !Bw+7 !Cn+7 !Kw=7 !Ln=7 !Tv=7 !Um=7 бBv[8 бCm[8 бKu[8 бLl[8 бTu+8 бUl+8 !Bv[7 !Cm[7 !Ku[7 !Ll[7 !Tu+7 !Ul+7
 18c361: =iгO8 =i#O7 =rвO8 =r@O7 +iгF8 +i#F7 +rвF8 +r@F7 [iгE8 [i#E7 [rвE8 [r@E7 =iгW8 =i#W7 =rвW8 =r@W7 +iгV8 +i#V7 +rвV8 +r@V7 [iгM8 [i#M7 [rвM8 [r@M7
 49c74: ARиT3 AR&T3 AаиK3 Aа&K3 JIиT3 JI&T3 JаиB3 Jа&B3 ARиU2 AR&U2 AаиL2 Aа&L2 SIиK3 SI&K3
